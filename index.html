@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T-shirt Database</title>
+  <meta name="description" content="A data-dense analyst tool for ranking premium t-shirts on textile engineering, structural geometry, and manufacturer disclosure. Inspired by Shift Fashion Group.">
+  <!-- Remix Icons CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css">
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+  <!-- Ambient background effect -->
+  <div class="ambient-bg"></div>
+
+  <div class="app-container">
+
+    <!-- Left Sidebar: Filters & Information -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 8px;">
+          <h1 class="app-title" style="flex: 1; display: flex; align-items: center;">
+            <img src="logo.svg" alt="T-shirt Database" class="app-logo">
+          </h1>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <select id="currency-select" class="currency-select" onchange="changeCurrency(this.value)" title="Change Currency">
+              <option value="AUD">AUD ($)</option>
+              <option value="USD">USD ($)</option>
+              <option value="EUR">EUR (€)</option>
+              <option value="GBP">GBP (£)</option>
+              <option value="JPY">JPY (¥)</option>
+              <option value="CAD">CAD ($)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters Section -->
+      <div id="sidebar-filters" class="scroll-container-wrapper">
+        <div class="scroll-content" style="padding-bottom: 24px;">
+          
+          <!-- Search -->
+          <div class="filter-group">
+            <label class="filter-label" for="search-input">Search Garments</label>
+            <input type="text" id="search-input" class="text-input" placeholder="Search brand, model, origin...">
+          </div>
+
+          <!-- Brand Filter (Multiselect) -->
+          <div class="filter-group">
+            <label class="filter-label">Brand</label>
+            <div class="multiselect-container" id="multi-brand">
+              <div class="multiselect-trigger" onclick="toggleMultiDropdown('multi-brand')">
+                <span class="trigger-label">All Brands</span>
+                <i class="ri-arrow-down-s-line"></i>
+              </div>
+              <div class="multiselect-dropdown" id="options-brand">
+                <!-- Checkboxes injected by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Fit Filter (Multiselect) -->
+          <div class="filter-group">
+            <label class="filter-label">Garment Fit</label>
+            <div class="multiselect-container" id="multi-fit">
+              <div class="multiselect-trigger" onclick="toggleMultiDropdown('multi-fit')">
+                <span class="trigger-label">All Fits</span>
+                <i class="ri-arrow-down-s-line"></i>
+              </div>
+              <div class="multiselect-dropdown" id="options-fit">
+                <!-- Checkboxes injected by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Country Filter (Multiselect) -->
+          <div class="filter-group">
+            <label class="filter-label">Country of Origin</label>
+            <div class="multiselect-container" id="multi-origin">
+              <div class="multiselect-trigger" onclick="toggleMultiDropdown('multi-origin')">
+                <span class="trigger-label">All Origins</span>
+                <i class="ri-arrow-down-s-line"></i>
+              </div>
+              <div class="multiselect-dropdown" id="options-origin">
+                <!-- Checkboxes injected by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Fiber Class Filter (Multiselect) -->
+          <div class="filter-group">
+            <label class="filter-label">Fiber Class</label>
+            <div class="multiselect-container" id="multi-fiber">
+              <div class="multiselect-trigger" onclick="toggleMultiDropdown('multi-fiber')">
+                <span class="trigger-label">All Fiber Classes</span>
+                <i class="ri-arrow-down-s-line"></i>
+              </div>
+              <div class="multiselect-dropdown" id="options-fiber">
+                <!-- Checkboxes injected by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Knit Type Filter (Multiselect) -->
+          <div class="filter-group">
+            <label class="filter-label">Knit Type</label>
+            <div class="multiselect-container" id="multi-knit">
+              <div class="multiselect-trigger" onclick="toggleMultiDropdown('multi-knit')">
+                <span class="trigger-label">All Knit Types</span>
+                <i class="ri-arrow-down-s-line"></i>
+              </div>
+              <div class="multiselect-dropdown" id="options-knit">
+                <!-- Checkboxes injected by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Weight Slider -->
+          <div class="filter-group">
+            <div class="slider-wrapper">
+              <div class="slider-values">
+                <span class="filter-label">Weight (GSM)</span>
+                <span id="weight-val-label" class="col-num">100g - 300g</span>
+              </div>
+              <div class="range-slider-container" id="slider-weight-container">
+                <div class="range-slider-track"></div>
+                <div class="range-slider-selected" id="slider-weight-selected"></div>
+                <div class="range-slider-inputs">
+                  <input type="range" id="filter-weight-min" min="100" max="300" step="10" value="100">
+                  <input type="range" id="filter-weight-max" min="100" max="300" step="10" value="300">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Value Index Slider -->
+          <div class="filter-group">
+            <div class="slider-wrapper">
+              <div class="slider-values">
+                <span class="filter-label">Value Index</span>
+                <span id="value-index-val-label" class="col-num">0 - 150</span>
+              </div>
+              <div class="range-slider-container" id="slider-value-index-container">
+                <div class="range-slider-track"></div>
+                <div class="range-slider-selected" id="slider-value-index-selected"></div>
+                <div class="range-slider-inputs">
+                  <input type="range" id="filter-value-index-min" min="0" max="150" step="5" value="0" title="Points per $100 AUD">
+                  <input type="range" id="filter-value-index-max" min="0" max="150" step="5" value="150" title="Points per $100 AUD">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Score Range Slider -->
+          <div class="filter-group">
+            <div class="slider-wrapper">
+              <div class="slider-values">
+                <span class="filter-label">Rating</span>
+                <span id="score-val-label" class="col-num">0.0 - 10.0</span>
+              </div>
+              <div class="range-slider-container" id="slider-score-container">
+                <div class="range-slider-track"></div>
+                <div class="range-slider-selected" id="slider-score-selected"></div>
+                <div class="range-slider-inputs">
+                  <input type="range" id="filter-score-min" min="0" max="10" step="0.5" value="0">
+                  <input type="range" id="filter-score-max" min="0" max="10" step="0.5" value="10">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Confidence Score Slider -->
+          <div class="filter-group">
+            <div class="slider-wrapper">
+              <div class="slider-values">
+                <span class="filter-label">Confidence</span>
+                <span id="confidence-val-label" class="col-num">0% - 100%</span>
+              </div>
+              <div class="range-slider-container" id="slider-confidence-container">
+                <div class="range-slider-track"></div>
+                <div class="range-slider-selected" id="slider-confidence-selected"></div>
+                <div class="range-slider-inputs">
+                  <input type="range" id="filter-confidence-min" min="0" max="100" step="5" value="0">
+                  <input type="range" id="filter-confidence-max" min="0" max="100" step="5" value="100">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sidebar Clear Filters Button -->
+          <div class="filter-group" style="margin-top: 24px;">
+            <button id="clear-filters-btn" class="btn btn-secondary" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px;">
+              <i class="ri-delete-bin-line"></i> <span id="clear-filters-text">Clear Filters (0)</span>
+            </button>
+          </div>
+
+        </div>
+        <!-- Progressive bottom blur to indicate scrolling -->
+        <div class="progressive-blur-bottom"></div>
+      </div>
+
+      <!-- Info Blurb referencing Shift Fashion Group -->
+      <footer class="sidebar-footer">
+        <p>Ranks t-shirts strictly on fiber quality, spinning methods, knit stability, construction geometries, and manufacturing transparency. No marketing claims or brand prestige are factored into scores.</p>
+        <p style="margin-top: 8px;">Metrics and <strong><a href="#" class="methodology-link-trigger" onclick="openMethodologyModal(); return false;">Methodology</a></strong> are heavily informed by technical teardowns by the <strong><a href="https://www.youtube.com/@ShiftFashionGroup" target="_blank" rel="noopener noreferrer">Shift Fashion Group</a></strong>.</p>
+        <p style="margin-top: 8px;">Spotted a data issue? <a href="mailto:diamnom+tsdb@gmail.com">Report an error</a></p>
+      </footer>
+    </aside>
+
+    <!-- Main Content Area: Database Table -->
+    <main class="main-content">
+      
+      <div id="view-database" class="scroll-container-wrapper" style="display: flex; flex: 1; flex-direction: column;">
+
+        <!-- Table Control Bar -->
+        <div class="table-control-bar">
+          <div class="active-count">
+            Showing <strong id="visible-count">0</strong> of <strong id="total-count">0</strong> garments
+          </div>
+          <div class="control-actions">
+            <!-- Compare Button (Top-Right Active State) -->
+            <button id="compare-btn" class="btn" disabled onclick="toggleCompareTray()">
+              Compare
+            </button>
+            <!-- Column visibility dropdown -->
+            <div class="dropdown-menu-container">
+              <button id="col-dropdown-btn" class="btn btn-secondary" onclick="toggleColDropdown()">Columns</button>
+              <div id="col-dropdown-menu" class="dropdown-menu">
+                <!-- Dropdown items will be injected by app.js -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Primary Data Table -->
+        <div class="table-wrapper">
+          <div class="table-scroll" id="table-scroll-container">
+            <table class="data-table" id="garment-table">
+              <thead>
+                <tr id="table-header-row">
+                  <!-- JS will render columns -->
+                </tr>
+              </thead>
+              <tbody id="table-body">
+                <!-- JS will inject table rows -->
+              </tbody>
+            </table>
+          </div>
+          <div class="table-scroll-controls">
+            <button id="scroll-left-btn" class="scroll-arrow-btn" title="Scroll Left" disabled>
+              <i class="ri-arrow-left-s-line"></i>
+            </button>
+            <button id="scroll-right-btn" class="scroll-arrow-btn" title="Scroll Right">
+              <i class="ri-arrow-right-s-line"></i>
+            </button>
+          </div>
+          <div class="scroll-edge-left" id="scroll-edge-left"></div>
+          <div class="scroll-edge-right" id="scroll-edge-right"></div>
+          <div class="progressive-blur-bottom"></div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Side Drawer: Garment Profile Details -->
+    <div id="drawer-backdrop" class="drawer-backdrop" onclick="closeDetailDrawer()"></div>
+    
+    <div id="detail-drawer" class="detail-drawer">
+      <header class="drawer-header">
+        <div class="drawer-title-group">
+          <span id="detail-brand" class="drawer-brand">BRAND</span>
+          <h3 id="detail-name" class="drawer-item-name">Garment Name</h3>
+        </div>
+        <button class="drawer-close" onclick="closeDetailDrawer()">✕</button>
+      </header>
+      
+      <div class="drawer-body">
+        
+        <!-- Garment Visual Reference Image -->
+        <div class="drawer-image-container">
+          <img id="detail-image" src="" alt="Garment reference spec">
+          <div id="detail-image-placeholder" class="image-placeholder-box">
+            <i class="ri-image-2-line" style="font-size: 24px; opacity: 0.3;"></i>
+          </div>
+        </div>
+
+        <!-- Score Heroes -->
+        <div class="scoring-grid">
+          <div class="score-hero-card primary-score">
+            <span class="score-hero-label">Final Rating</span>
+            <span class="score-hero-num" id="detail-final-score">0.0</span>
+            <span class="score-hero-label">/ 10 points</span>
+          </div>
+          <div class="score-hero-card">
+            <span class="score-hero-label">Engineering</span>
+            <span class="score-hero-num score-hero-num-mono" id="detail-eng-score">0</span>
+            <span class="score-hero-label">/ 100 max</span>
+          </div>
+          <div class="score-hero-card">
+            <span class="score-hero-label">Confidence</span>
+            <span class="score-hero-num score-hero-num-mono" id="detail-conf-score">0%</span>
+            <span class="score-hero-label">disclosure ratio</span>
+          </div>
+        </div>
+
+        <!-- Rejection Warning Banner -->
+        <div id="detail-rejection-banner" class="red-flags-box" style="margin-bottom: 24px; display: none;">
+          <div class="red-flag-item">
+            <span id="detail-rejection-reason">Reason listed here</span>
+          </div>
+        </div>
+
+        <!-- Scoring Breakdown Progress Bars -->
+        <div class="drawer-section">
+          <h4 class="drawer-section-title">Weighted Breakdown</h4>
+          <div class="subscore-bar-group">
+            
+            <div class="subscore-row">
+              <div class="subscore-header">
+                <span>Fibre & Yarn Quality</span>
+                <div class="subscore-meta">
+                  <span class="subscore-val" id="bar-val-fiber">0</span>
+                  <span class="subscore-weight">/30</span>
+                </div>
+              </div>
+              <div class="subscore-bg-bar">
+                <div id="bar-fill-fiber" class="subscore-fill-bar primary"></div>
+              </div>
+            </div>
+
+            <div class="subscore-row">
+              <div class="subscore-header">
+                <span>Knit & Dyeing Processing</span>
+                <div class="subscore-meta">
+                  <span class="subscore-val" id="bar-val-knit">0</span>
+                  <span class="subscore-weight">/20</span>
+                </div>
+              </div>
+              <div class="subscore-bg-bar">
+                <div id="bar-fill-knit" class="subscore-fill-bar"></div>
+              </div>
+            </div>
+
+            <div class="subscore-row">
+              <div class="subscore-header">
+                <span>Geometry & Construction</span>
+                <div class="subscore-meta">
+                  <span class="subscore-val" id="bar-val-geom">0</span>
+                  <span class="subscore-weight">/20</span>
+                </div>
+              </div>
+              <div class="subscore-bg-bar">
+                <div id="bar-fill-geom" class="subscore-fill-bar"></div>
+              </div>
+            </div>
+
+            <div class="subscore-row">
+              <div class="subscore-header">
+                <span>Stability & Finish resilience</span>
+                <div class="subscore-meta">
+                  <span class="subscore-val" id="bar-val-stab">0</span>
+                  <span class="subscore-weight">/15</span>
+                </div>
+              </div>
+              <div class="subscore-bg-bar">
+                <div id="bar-fill-stab" class="subscore-fill-bar"></div>
+              </div>
+            </div>
+
+            <div class="subscore-row">
+              <div class="subscore-header">
+                <span>Manufacturer Disclosure</span>
+                <div class="subscore-meta">
+                  <span class="subscore-val" id="bar-val-disc">0</span>
+                  <span class="subscore-weight">/15</span>
+                </div>
+              </div>
+              <div class="subscore-bg-bar">
+                <div id="bar-fill-disc" class="subscore-fill-bar"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Technical Specification Fields -->
+        <div class="drawer-section">
+          <h4 class="drawer-section-title">Technical Specifications</h4>
+          <div class="spec-list">
+            
+            <span class="spec-item-label">Retail Pricing</span>
+            <span class="spec-item-val" id="spec-price">$0 AUD</span>
+
+            <span class="spec-item-label">Fit / Cut Silhouette</span>
+            <span class="spec-item-val" id="spec-fit">unspecified</span>
+
+            <span class="spec-item-label">Fabric Composition</span>
+            <span class="spec-item-val" id="spec-composition">unspecified</span>
+
+            <span class="spec-item-label">Fiber</span>
+            <span class="spec-item-val" id="spec-cotton-type">unspecified</span>
+
+            <span class="spec-item-label">Yarn (Count/Ply)</span>
+            <span class="spec-item-val" id="spec-yarn-count">unspecified</span>
+
+            <span class="spec-item-label">Yarn Spinning Method</span>
+            <span class="spec-item-val" id="spec-yarn-spin">unspecified</span>
+
+            <span class="spec-item-label">Knit</span>
+            <span class="spec-item-val" id="spec-knit-type">unspecified</span>
+
+            <span class="spec-item-label">Garment Weight</span>
+            <span class="spec-item-val" id="spec-weight">unspecified</span>
+
+            <span class="spec-item-label">Country of Origin</span>
+            <span class="spec-item-val" id="spec-origin">unspecified</span>
+
+            <span class="spec-item-label">Side Seams Structure</span>
+            <span class="spec-item-val" id="spec-side-seams">unspecified</span>
+
+            <span class="spec-item-label">Shoulder Seam Position</span>
+            <span class="spec-item-val" id="spec-shoulder-seam">unspecified</span>
+
+            <span class="spec-item-label">Rear Neck Structure</span>
+            <span class="spec-item-val" id="spec-neck-structure">unspecified</span>
+
+            <span class="spec-item-label">Collar Rib / Recovery</span>
+            <span class="spec-item-val" id="spec-collar">unspecified</span>
+
+            <span class="spec-item-label">Shrinkage Treatment</span>
+            <span class="spec-item-val" id="spec-shrinkage">unspecified</span>
+
+            <span class="spec-item-label">Last Audited Date</span>
+            <span class="spec-item-val" id="spec-last-verified">unspecified</span>
+
+          </div>
+        </div>
+
+        <!-- Red Flags check -->
+        <div class="drawer-section">
+          <h4 class="drawer-section-title">Anomalies & Red Flags</h4>
+          <div id="detail-flags-box" class="red-flags-box">
+            <ul class="red-flags-list" id="detail-flags-list">
+              <!-- JS will append warning list items -->
+            </ul>
+          </div>
+        </div>
+
+        <!-- Evidence and Analyst Notes -->
+        <div class="drawer-section">
+          <h4 class="drawer-section-title">Evidence & Analyst Dissection</h4>
+          <div class="analyst-notes-box" id="detail-notes">
+            Analyst notes will be placed here.
+          </div>
+          <div class="source-links-group" id="detail-source-links">
+            <!-- Link anchors will be injected here -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Bottom Tray: Comparison Matrix Sheet -->
+    <div id="compare-tray" class="compare-tray">
+      <header class="compare-header">
+        <div class="compare-title-group">
+          <h3 class="compare-title">Comparison</h3>
+          <span class="compare-badge" id="compare-items-count">0 selected</span>
+        </div>
+        <div class="compare-actions">
+          <button class="btn btn-secondary" onclick="clearPinnedGarments()">Clear All</button>
+          <button class="btn" onclick="toggleCompareTray()">Close</button>
+        </div>
+      </header>
+      
+      <div class="compare-body">
+        <div class="compare-grid" id="compare-matrix-grid">
+          <!-- Dynamic comparison columns will be injected by app.js -->
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Methodology Modal (Triggered by link in footer) -->
+  <div id="methodology-modal" class="modal-overlay" onclick="closeMethodologyModal()">
+    <div class="modal-content glare-card" onclick="event.stopPropagation()">
+      <header class="modal-header">
+        <h3 class="modal-title">Methodology Overview</h3>
+        <button class="modal-close-btn" onclick="closeMethodologyModal()">✕</button>
+      </header>
+      <div class="modal-body scroll-content">
+        <div class="methodology-container">
+          
+          <section class="methodology-card">
+            <h4 class="methodology-heading">Design & Scoring Philosophy</h4>
+            <p class="methodology-text">
+              The scoring logic removes subjective "luxury feel" and marketing claims. A garment is evaluated as an industrial product of agriculture, spinning technology, and manufacturing construction. 
+            </p>
+            <p class="methodology-text">
+              A garment's final score is calculated out of 10. It is heavily weighted by three key pillars: Fiber & Yarn engineering, Knit & Stability processing, and Geometric assembly quality.
+            </p>
+          </section>
+
+          <section class="methodology-card">
+            <h4 class="methodology-heading">Sub-Score Weights</h4>
+            <p class="methodology-text">
+              Each profile breaks down into five category scores that compound to create the <strong>Engineering Score (100 pts)</strong>:
+            </p>
+            <table class="methodology-table">
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th>Weight</th>
+                  <th>Technical Parameters Evaluated</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Fibre & Yarn</strong></td>
+                  <td>30%</td>
+                  <td>Fibre staple length (Suvin, Pima, Egyptian), yarn ply (2-ply vs 1-ply), combed vs carded, compact spun, and yarn count.</td>
+                </tr>
+                <tr>
+                  <td><strong>Knit & Dyeing</strong></td>
+                  <td>20%</td>
+                  <td>Knitting tension consistency, machinery class (loopwheel vs high-speed circular), dye penetration, and wash fastness.</td>
+                </tr>
+                <tr>
+                  <td><strong>Geometry & Construction</strong></td>
+                  <td>20%</td>
+                  <td>Shoulder seam forward shifting, armhole height spacing, rear neck tape reinforcing, side seam integration (or loopwheel circular tubular drape).</td>
+                </tr>
+                <tr>
+                  <td><strong>Stability & Finishing</strong></td>
+                  <td>15%</td>
+                  <td>Sanforization processing, pre-shrinking treatments, seam twisting resistance, and collar recovery resilience.</td>
+                </tr>
+                <tr>
+                  <td><strong>Manufacturer Disclosure</strong></td>
+                  <td>15%</td>
+                  <td>Traceability disclosures regarding agricultural mill origin, spinning plant location, and sewing facility conditions.</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section class="methodology-card">
+            <h4 class="methodology-heading">Hard-Gate Penalties (Rejection Flags)</h4>
+            <p class="methodology-text">
+              To prevent marketing-based inflation, the algorithm employs strict structural gates. A t-shirt is instantly flagged with a <strong>Hard Rejection</strong> and its Final Score capped if it fails any of the following parameters:
+            </p>
+            <ul class="methodology-list">
+              <li><strong>Synthetic Fiber Blends</strong>: High polyester/nylon content in the body fabric (excluding standard elastane ribbing reinforcement) lowers the score.</li>
+              <li><strong>Open-End Carded Yarn</strong>: Short-staple open-end spinning produces structural weakness and a scratchy feel, indicating low-tier material.</li>
+              <li><strong>Unstable Tubular Construction</strong>: Circular knit fabrics that bypass side seams without proper sanforization or skew correction, leading to significant twisting after washing.</li>
+              <li><strong>Dry-Clean Only Labels</strong>: A t-shirt requiring dry cleaning indicates extreme fiber instability or fragile, chemical-heavy surface finishes.</li>
+              <li><strong>Zero Transparencies & Claims</strong>: High-priced brand markup using "Premium Egyptian Cotton" claims without certificates, source mill listing, or factory verification.</li>
+            </ul>
+          </section>
+
+          <section class="methodology-card">
+            <h4 class="methodology-heading">Confidence & Transparency Scoring</h4>
+            <p class="methodology-text">
+              The <strong>Confidence Score</strong> measures the ratio of verified, auditable data vs unverified claims. If a specification is unknown, it is explicitly disclosed as such. Unknown variables are never averaged upward or assumed to be positive; instead, they reduce the confidence score, which in turn dampens the value ranking.
+            </p>
+          </section>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
