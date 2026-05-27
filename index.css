@@ -144,6 +144,25 @@ html, body {
   position: relative;
 }
 
+/* Mobile Filter Toggle & Collapsible Content (Desktop Defaults) */
+.mobile-filter-toggle {
+  display: none;
+}
+
+.sidebar-collapsible-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.sidebar-collapsible-inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
 .sidebar-header {
   padding: 24px;
   display: flex;
@@ -1888,6 +1907,69 @@ body.light-mode .external-link-btn:hover {
     height: auto;
     border-right: none;
     border-bottom: 1px solid var(--border-800);
+  }
+  .mobile-filter-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 14px 24px;
+    background-color: var(--bg-900-80);
+    border: none;
+    border-bottom: 1px solid var(--border-800);
+    color: var(--text-white);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    user-select: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    text-align: left;
+    outline: none;
+  }
+  .mobile-filter-toggle:hover {
+    background-color: var(--bg-800-50);
+  }
+  .mobile-filter-toggle .toggle-arrow {
+    font-size: 16px;
+    color: var(--text-400);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .mobile-filter-toggle[aria-expanded="true"] .toggle-arrow {
+    transform: rotate(180deg);
+  }
+  .active-filter-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--text-white);
+    color: var(--bg-950);
+    font-size: 9px;
+    font-weight: 700;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    margin-left: 6px;
+    line-height: 1;
+    transform: translateY(-1px);
+  }
+  .sidebar-collapsible-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: auto;
+    flex: none;
+  }
+  .sidebar-collapsible-content.is-expanded {
+    grid-template-rows: 1fr;
+  }
+  .sidebar-collapsible-inner {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
   .main-content {
     flex: 1;

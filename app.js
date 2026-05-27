@@ -626,6 +626,12 @@ function setupEventListeners() {
   bindDualSliderEvents('score', true);
   bindDualSliderEvents('confidence');
 
+  // Mobile Filter Toggle Button click handler
+  const filterToggle = document.getElementById('mobile-filter-toggle');
+  if (filterToggle) {
+    filterToggle.addEventListener('click', toggleMobileFilters);
+  }
+
   // Sidebar Clear Filters Button click handler
   document.getElementById('clear-filters-btn').addEventListener('click', () => {
     clearAllFilters();
@@ -811,6 +817,16 @@ function updateClearFiltersButton() {
   if (STATE.filters.valueIndexMin > LIMITS.valueIndexMin || STATE.filters.valueIndexMax < LIMITS.valueIndexMax) activeCount++;
 
   clearTxt.textContent = `Clear Filters (${activeCount})`;
+
+  const mobileBadge = document.getElementById('mobile-filter-badge');
+  if (mobileBadge) {
+    if (activeCount > 0) {
+      mobileBadge.textContent = activeCount;
+      mobileBadge.style.display = 'inline-flex';
+    } else {
+      mobileBadge.style.display = 'none';
+    }
+  }
   
   if (activeCount === 0) {
     clearBtn.disabled = true;
@@ -1477,4 +1493,21 @@ function setup3dGlareEffects() {
       }
     });
   });
+}
+
+// Collapsible Mobile Filters toggle state handler
+function toggleMobileFilters() {
+  const content = document.getElementById('sidebar-collapsible-content');
+  const toggleBtn = document.getElementById('mobile-filter-toggle');
+  if (!content || !toggleBtn) return;
+
+  const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+  const newExpanded = !isExpanded;
+
+  toggleBtn.setAttribute('aria-expanded', newExpanded);
+  if (newExpanded) {
+    content.classList.add('is-expanded');
+  } else {
+    content.classList.remove('is-expanded');
+  }
 }
