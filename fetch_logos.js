@@ -43,7 +43,8 @@ const BRAND_OVERRIDES = {
   "Veilance": "veilance.com",
   "Kirkland Signature": "costco.com",
   "COMOLI": "comoli.jp",
-  "Handvaerk": "handvaerk.com"
+  "Handvaerk": "handvaerk.com",
+  "LSKD": "lskd.co"
 };
 
 // Brands that should not have a logo (fallback to text initial)
